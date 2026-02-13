@@ -9,9 +9,11 @@ import {
   Circle, 
   Calendar,
   AlertCircle,
-  Edit
+  Edit,
+  Eye
 } from 'lucide-react';
 import TaskForm from './TaskForm';
+import TaskDetail from './TaskDetail';
 
 interface TaskItemProps {
   task: Task;
@@ -20,6 +22,7 @@ interface TaskItemProps {
 export default function TaskItem({ task }: TaskItemProps) {
   const { toggleTask, deleteTask } = useTaskContext();
   const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
+  const [isViewingModalOpen, setIsViewingModalOpen] = useState(false);
 
   const typeMap = {
     high: { label: 'High', color: 'bg-cyan-100 text-cyan-700 border-cyan-200 text-center' },
@@ -47,7 +50,7 @@ export default function TaskItem({ task }: TaskItemProps) {
           
           <span 
             className={`text-sm font-medium text-zinc-900 cursor-pointer hover:text-blue-600 truncate ${task.completed ? 'line-through text-zinc-400' : ''}`}
-            onClick={() => setIsEditingModalOpen(true)}
+            onClick={() => setIsViewingModalOpen(true)}
           >
             {task.title}
           </span>
@@ -99,6 +102,13 @@ export default function TaskItem({ task }: TaskItemProps) {
           />
           <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
             <button 
+              onClick={() => setIsViewingModalOpen(true)}
+              className="p-1.5 text-zinc-400 hover:text-blue-600 transition-colors"
+              title="View Details"
+            >
+              <Eye size={16} />
+            </button>
+            <button 
               onClick={() => setIsEditingModalOpen(true)}
               className="p-1.5 text-zinc-400 hover:text-blue-600 transition-colors"
               title="Edit Task"
@@ -126,6 +136,15 @@ export default function TaskItem({ task }: TaskItemProps) {
                 initialData={task}
              />
            </div>
+        </div>
+      )}
+
+      {isViewingModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+           <TaskDetail 
+              task={task} 
+              onClose={() => setIsViewingModalOpen(false)} 
+           />
         </div>
       )}
     </>
